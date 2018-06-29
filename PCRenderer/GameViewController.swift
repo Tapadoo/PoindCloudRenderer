@@ -21,12 +21,8 @@ class GameViewController: UIViewController {
         // create and add a camera to the scene
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
-        cameraNode.camera?.zNear = 0.0
-        cameraNode.camera?.zFar = 10.0
+        cameraNode.camera?.automaticallyAdjustsZRange = true
         scene.rootNode.addChildNode(cameraNode)
-        
-        // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0.3)
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -39,18 +35,18 @@ class GameViewController: UIViewController {
         let ambientLightNode = SCNNode()
         ambientLightNode.light = SCNLight()
         ambientLightNode.light!.type = .ambient
-        ambientLightNode.light!.color = UIColor.darkGray
+        ambientLightNode.light!.color = UIColor.lightGray
         scene.rootNode.addChildNode(ambientLightNode)
         
         // retrieve the node
         let pc = PointCloud()
         let pcNode = pc.getNode()
-        pcNode.position = SCNVector3(x: 0, y: -0.1, z: 0)
-        
+        pcNode.position = SCNVector3(x: 0, y: 0, z:-0.2)
+        pcNode.renderingOrder = 100_000
         scene.rootNode.addChildNode(pcNode)
         
         // animate the 3d object
-        pcNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
+        //pcNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
@@ -61,11 +57,22 @@ class GameViewController: UIViewController {
         // allows the user to manipulate the camera
         scnView.allowsCameraControl = true
         
+        
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
         
         // configure the view
-        scnView.backgroundColor = UIColor.black
+        scnView.backgroundColor = UIColor.darkGray
+        
+        cameraNode.camera?.automaticallyAdjustsZRange = false
+        cameraNode.camera?.zNear  = 0.001
+        cameraNode.camera?.zFar = 100
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
+        //cameraNode.camera?.fieldOfView
+        //cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, -Float.pi, 0.0, 1.0, 0.0)
+        
+        //scnView.defaultCameraController.automaticTarget = false
+        //scnView.defaultCameraController.target = SCNVector3(x: 0, y: 0, z: 0)
         
         // add a tap gesture recognizer
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))

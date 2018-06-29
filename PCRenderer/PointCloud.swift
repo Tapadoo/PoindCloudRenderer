@@ -13,16 +13,15 @@ import SceneKit
     var n : Int = 0
     var pointCloud : Array<SCNVector3> = []
     
-    override init() {
+    init(filename: String = "bun_zipper_points") {
         super.init()
         
-        let file: String = "bun_zipper_points.ply"
         self.n = 0
         var x, y, z : Double
         (x,y,z) = (0,0,0)
         
         // Open file
-        if let path = Bundle.main.path(forResource: file, ofType: "txt") {
+        if let path = Bundle.main.path(forResource: filename, ofType: "ply") {
             do {
                 let data = try String(contentsOfFile: path, encoding: .ascii)
                 var myStrings = data.components(separatedBy: "\n")
@@ -62,17 +61,9 @@ import SceneKit
     
     
     public func getNode() -> SCNNode {
-        let points = self.pointCloud
-        var vertices = Array(repeating: PointCloudVertex(x: 0,y: 0,z: 0,r: 0,g: 0,b: 0), count: points.count)
         
-        for i in 0...(points.count-1) {
-            let p = points[i]
-            vertices[i].x = Float(p.x)
-            vertices[i].y = Float(p.y)
-            vertices[i].z = Float(p.z)
-            vertices[i].r = Float(0.0)
-            vertices[i].g = Float(1.0)
-            vertices[i].b = Float(1.0)
+        let vertices = self.pointCloud.map { point in
+            return PointCloudVertex(x: point.x,y: point.y,z: point.z,r: 1,g: 1,b: 1)
         }
         
         let node = buildNode(points: vertices)
@@ -107,11 +98,19 @@ import SceneKit
         )
         let elements = SCNGeometryElement(
             data: nil,
-            primitiveType: .point,
+            primitiveType: .line,
             primitiveCount: points.count,
             bytesPerIndex: MemoryLayout<Int>.size
         )
+        elements.pointSize = 1
+        elements.minimumPointScreenSpaceRadius = 1
+        elements.maximumPointScreenSpaceRadius = 1
+        
         let pointsGeometry = SCNGeometry(sources: [positionSource, colorSource], elements: [elements])
+        let material = SCNMaterial()
+        material.specular.contents = UIColor.white
+        material.lightingModel = .constant
+        pointsGeometry.materials = [material]
         
         return SCNNode(geometry: pointsGeometry)
     }
