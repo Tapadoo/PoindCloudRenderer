@@ -41,7 +41,7 @@ class GameViewController: UIViewController {
         // retrieve the node
         let pc = PointCloud()
         let pcNode = pc.getNode()
-        pcNode.position = SCNVector3(x: 0, y: 0, z:-0.2)
+        pcNode.position = SCNVector3(x: 0, y: -0.15, z:-0)
         pcNode.renderingOrder = 100_000
         scene.rootNode.addChildNode(pcNode)
         
@@ -67,12 +67,11 @@ class GameViewController: UIViewController {
         cameraNode.camera?.automaticallyAdjustsZRange = false
         cameraNode.camera?.zNear  = 0.001
         cameraNode.camera?.zFar = 100
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0)
-        //cameraNode.camera?.fieldOfView
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0.3)
         //cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, -Float.pi, 0.0, 1.0, 0.0)
         
-        //scnView.defaultCameraController.automaticTarget = false
-        //scnView.defaultCameraController.target = SCNVector3(x: 0, y: 0, z: 0)
+        scnView.defaultCameraController.automaticTarget = false
+        scnView.defaultCameraController.target = SCNVector3(x: 0, y: 0, z: 0)
         
         // add a tap gesture recognizer
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))

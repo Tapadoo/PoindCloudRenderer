@@ -16,42 +16,58 @@ import SceneKit
     init(filename: String = "bun_zipper_points") {
         super.init()
         
-        self.n = 0
-        var x, y, z : Double
-        (x,y,z) = (0,0,0)
-        
         // Open file
         if let path = Bundle.main.path(forResource: filename, ofType: "ply") {
             do {
                 let data = try String(contentsOfFile: path, encoding: .ascii)
-                var myStrings = data.components(separatedBy: "\n")
+                NSLog("Point cloud loaded from file")
                 
-                // Read header
-                while !myStrings.isEmpty {
-                    let line = myStrings.removeFirst()
-                    if line.hasPrefix("element vertex ") {
-                        n = Int(line.components(separatedBy: " ")[2])!
-                        continue
-                    }
-                    if line.hasPrefix("end_header") {
-                        break
-                    }
-                }
+                //Without a header, we dont know our point count
+                guard let headerEndRange = data.range(of: "end_header") else {return }
                 
-                pointCloud = Array<SCNVector3>(repeating: SCNVector3(x:0,y:0,z:0), count: n)
+                //We need to extract the point count from the header. Lets get the header as a substring to work with
+                let headerSubString = data[data.startIndex ... headerEndRange.upperBound]
+                
+                
+                guard let elementVertexRange = headerSubString.range(of: "element vertex ") else {return }
+                
+                //This is the substring container the number followed by the rest of the header
+                let vertexCountParialString = headerSubString.suffix(from: elementVertexRange.upperBound)
+                
+                //Find the next line break and create a substring with just the vertex count
+                let vertexEndIndex = vertexCountParialString.index(of: "\n") ?? vertexCountParialString.endIndex
+                let vertexCountString = vertexCountParialString[..<vertexEndIndex]
+                
+                n = Int(vertexCountString) ?? 0
+                
+                NSLog("Header parsed")
+                
+                pointCloud.reserveCapacity(n)
+                
+                var x: Float = 0
+                var y: Float = 0
+                var z: Float = 0
+                
+                let pointStartIndex = headerEndRange.upperBound
+                
+                let pointDataSubString = data[pointStartIndex...]
+
+                let dataScanner = Scanner(string: String(pointDataSubString))
                 
                 // Read data
-                for i in 0...(self.n-1) {
-                    let line = myStrings[i]
-                    x = Double(line.components(separatedBy: " ")[0])!
-                    y = Double(line.components(separatedBy: " ")[1])!
-                    z = Double(line.components(separatedBy: " ")[2])!
+                for _ in 0 ..< n {
+
+                    dataScanner.scanFloat(&x)
+                    dataScanner.scanFloat(&y)
+                    dataScanner.scanFloat(&z)
                     
-                    pointCloud[i].x = Float(x)
-                    pointCloud[i].y = Float(y)
-                    pointCloud[i].z = Float(z)
+                    //bunny model for example has extra points. lets ignore anything but the first 3 floats for now
+                    dataScanner.scanUpToCharacters(from: CharacterSet.newlines, into: nil)
+                    
+                    let vector = SCNVector3(x: x , y: y, z: z)
+                    pointCloud.append(vector)
                 }
-                NSLog("Point cloud data loaded: %d points",n)
+                NSLog("Point cloud data loaded: %d points", n)
             } catch {
                 print(error)
             }
@@ -98,7 +114,7 @@ import SceneKit
         )
         let elements = SCNGeometryElement(
             data: nil,
-            primitiveType: .line,
+            primitiveType: .point,
             primitiveCount: points.count,
             bytesPerIndex: MemoryLayout<Int>.size
         )
