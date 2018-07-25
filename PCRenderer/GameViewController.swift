@@ -39,7 +39,7 @@ class GameViewController: UIViewController {
         scene.rootNode.addChildNode(ambientLightNode)
         
         // retrieve the node
-        let pc = PointCloud(filename: "sample-small")
+        let pc = PointCloud(filename: "dragon_hidden")
         let pcNode = pc.getNode()
         pcNode.position = SCNVector3(x: 0, y: 0, z:0)
         pcNode.renderingOrder = 100_000
@@ -67,7 +67,7 @@ class GameViewController: UIViewController {
         cameraNode.camera?.automaticallyAdjustsZRange = false
         cameraNode.camera?.zNear  = 0.001
         cameraNode.camera?.zFar = 100
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 5)
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 2)
         //cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, -Float.pi, 0.0, 1.0, 0.0)
         
         scnView.defaultCameraController.automaticTarget = false
