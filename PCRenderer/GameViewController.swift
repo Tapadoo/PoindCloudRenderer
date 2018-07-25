@@ -39,9 +39,9 @@ class GameViewController: UIViewController {
         scene.rootNode.addChildNode(ambientLightNode)
         
         // retrieve the node
-        let pc = PointCloud()
+        let pc = PointCloud(filename: "sample-small")
         let pcNode = pc.getNode()
-        pcNode.position = SCNVector3(x: 0, y: -0.15, z:-0)
+        pcNode.position = SCNVector3(x: 0, y: 0, z:0)
         pcNode.renderingOrder = 100_000
         scene.rootNode.addChildNode(pcNode)
         
@@ -67,7 +67,7 @@ class GameViewController: UIViewController {
         cameraNode.camera?.automaticallyAdjustsZRange = false
         cameraNode.camera?.zNear  = 0.001
         cameraNode.camera?.zFar = 100
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 0.3)
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 5)
         //cameraNode.transform = SCNMatrix4Rotate(cameraNode.transform, -Float.pi, 0.0, 1.0, 0.0)
         
         scnView.defaultCameraController.automaticTarget = false
