@@ -39,7 +39,7 @@ class GameViewController: UIViewController {
         scene.rootNode.addChildNode(ambientLightNode)
         
         // retrieve the node
-        let pc = PointCloud()
+        let pc = PointCloud(filename: "dragon_hidden")
         let pcNode = pc.getNode()
         pcNode.position = SCNVector3(x: 0, y: 0, z:-0.2)
         pcNode.renderingOrder = 100_000

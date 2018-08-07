@@ -98,7 +98,7 @@ import SceneKit
         )
         let elements = SCNGeometryElement(
             data: nil,
-            primitiveType: .line,
+            primitiveType: .point,
             primitiveCount: points.count,
             bytesPerIndex: MemoryLayout<Int>.size
         )
